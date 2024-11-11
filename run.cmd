@@ -1,3 +1,9 @@
+@echo off
+
+cd c:\devel\source\klemm-camera-viewer
+
+call mvn clean install
+
 start javaw.exe   ^
 -Dfile.encoding=UTF-8                        ^
 -Dstdout.encoding=UTF-8                      ^
