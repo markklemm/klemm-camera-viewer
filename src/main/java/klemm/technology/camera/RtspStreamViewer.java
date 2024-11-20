@@ -18,6 +18,7 @@ import org.bytedeco.javacv.FFmpegLogCallback;
 import org.bytedeco.javacv.Frame;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
@@ -55,23 +56,6 @@ public class RtspStreamViewer {
 	private void run() {
 		System.out.println("Starting");
 
-		//while (number > 0 && start < (255 - size)) {
-	//		final Thread t = new Thread(new Runnable() {
-	//			@Override
-	//			public void run() {
-	//				List<String> cameras = findCameras("10.1.1", RtspStreamViewer.this.start, RtspStreamViewer.this.size);
-	//				System.out.println("Cameras found: " + cameras);
-	//			}
-	//		});
-	//	
-	//	//	t.start();
-//
-//			this.start  += this.size;
-//			this.number --;
-//		}
-
-
-
 		String rtspUrl = "rtsp://camera1:camera12@10.1.1.7:554/stream1";
 
 		// avutil.av_log_set_level(avutil.AV_LOG_INFO);
@@ -108,6 +92,8 @@ public class RtspStreamViewer {
 			canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			canvas.setVisible(true);
 
+			this.adjustFrameSize(canvas);
+
 			System.out.println("Canvas init complete");
 
 			// Set up audio output
@@ -124,8 +110,7 @@ public class RtspStreamViewer {
 			else {
 				System.out.println("Audio not enabled");
 			}
-
-			
+		
 
 			// Stream video and audio
 			Frame frame;
@@ -171,66 +156,34 @@ public class RtspStreamViewer {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 
 		System.out.println("Done");
 	}
 
-	// protected List<String> findCameras(String subnet, int number, int size) {
-	// 	List<String> cameraAddresses = new ArrayList<>();
-	// 	int port = 554;
-	// 	String path = "/stream1";
+	private void adjustFrameSize(CanvasFrame canvas) {
+        // Get current frame size
+        Dimension currentSize = canvas.getSize();
+        int currentWidth = currentSize.width;
+        int currentHeight = currentSize.height;
 
-	// 	System.out.println("Scanning for cameras on subnet: " + subnet);
+        // Tolerance
+        int tolerance = 100;
 
-	// 	// Scan IP range from 1 to 254 on the provided subnet
-	// 	for (int i = number; i < 255 && i < (number + size); i++) {
-					
-	// 		String ipAddress = subnet + "." + i;
+        // Get screen dimensions
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
 
-	// 		// Check if port 554 is open
-	// 		try (Socket socket = new Socket(ipAddress, port)) {
-	// 			socket.setSoTimeout(100); // Set a timeout for quick scanning
-	// 			System.out.println("Port 554 open on " + ipAddress);
-
-	// 			// Check if there's an RTSP stream at /stream1
-	// 			String rtspUrl = "rtsp://camera1:camera12@" + ipAddress + ":" + port + path;
-	// 			if (isRtspStreamActive(rtspUrl)) {
-	// 				cameraAddresses.add(rtspUrl);
-	// 				System.out.println("Camera found at " + rtspUrl);
-	// 			}
-	// 			else {
-	// 				System.out.println("Camera not at " + rtspUrl);					
-	// 			}
-
-	// 		} catch (Exception e) {
-	// 			// Ignore hosts where connection failed
-	// 			System.out.println("Camera not at " + ipAddress);						
-	// 		}
-
-	// 		if (!this.keepScanningCameras) {
-	// 			break;
-	// 		}
-			
-	// 	}
-
-	// 	if (cameraAddresses.isEmpty()) {
-	// 		System.out.println("No cameras found on the subnet.");
-	// 	}
-
-	// 	return cameraAddresses;
-	// }
-
-	// private static boolean isRtspStreamActive(String rtspUrl) {
-	// 	try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(rtspUrl)) {
-	// 		grabber.setOption("rtsp_transport", "tcp");
-	// 		grabber.start();
-	// 		grabber.stop();
-	// 		return true;
-	// 	} catch (Exception e) {
-	// 		// Stream not active or not accessible
-	// 		return false;
-	// 	}
-	// }
+        // Check if the screen resolution is within the tolerance of the current frame size
+        if (Math.abs(screenWidth - currentWidth) <= tolerance || Math.abs(screenHeight - currentHeight) <= tolerance) {
+            // Maximize the frame
+            canvas.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } else {
+            // Center the frame
+            canvas.setLocationRelativeTo(null);
+        }
+    }
 
 }
