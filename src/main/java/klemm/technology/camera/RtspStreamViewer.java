@@ -32,7 +32,13 @@ public class RtspStreamViewer {
 	
 	public static void main(String[] args) {
 		try {
-			new RtspStreamViewer().run();
+
+			boolean enableSound = false;
+			if (args != null && args.length > 0 && args[0] != null) {
+				enableSound = ("--sound".equals(args[0]));
+			}
+
+			new RtspStreamViewer(enableSound).run();
 		}
 		catch (Exception m) {
 			m.printStackTrace();
@@ -40,7 +46,10 @@ public class RtspStreamViewer {
 
 	}
 
-	private RtspStreamViewer() {
+	private boolean enableSound = false;
+
+	private RtspStreamViewer(final boolean enableSound) {
+		this.enableSound = enableSound;
 	}
 
 	private void run() {
@@ -104,9 +113,13 @@ public class RtspStreamViewer {
 			// Set up audio output
 			AudioFormat audioFormat = new AudioFormat(grabber.getSampleRate(), 16, grabber.getAudioChannels(), true, true);
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+			
 			SourceDataLine audioLine = (SourceDataLine) AudioSystem.getLine(info);
-			audioLine.open(audioFormat);
-			audioLine.start();
+
+			if (this.enableSound) {
+				audioLine.open(audioFormat);
+				audioLine.start();
+			}
 
 			System.out.println("Audio started");
 
@@ -119,7 +132,7 @@ public class RtspStreamViewer {
 				}
 
 				// Play audio frames
-				if (frame.samples != null) {
+				if (this.enableSound && frame.samples != null) {
 					ShortBuffer audioBuffer = (ShortBuffer) frame.samples[0];
 					audioBuffer.rewind(); // Reset buffer position to zero
 
@@ -142,8 +155,11 @@ public class RtspStreamViewer {
 
 			grabber.stop();
 			canvas.dispose();
-			audioLine.drain();
-			audioLine.close();
+
+			if (this.enableSound) {
+				audioLine.drain();
+				audioLine.close();
+			}
 			
 			this.keepScanningCameras = false;
 
