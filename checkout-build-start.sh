@@ -2,7 +2,7 @@
 
 DEST_DIR="$HOME/klemm-camera-viewer"
 rm -f "$DEST_DIR/splash.pid"
-java -splash:splash.png  "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java"
+java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" &
 
 # place a copy of this script in the DEST_DIR folder
 # RUN chmod +x checkout-build-start.sh
