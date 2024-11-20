@@ -1,7 +1,8 @@
 #!/bin/bash
 
 DEST_DIR="$HOME/klemm-camera-viewer"
-PID=$(java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" &)
+java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" &
+PID=$!
 
 # place a copy of this script in the DEST_DIR folder
 # RUN chmod +x checkout-build-start.sh
@@ -25,7 +26,8 @@ if [[ "$SCRIPT_DIR" == "$(realpath "$DEST_DIR")" ]]; then
   TMP_SPLASH_IMG=$(mktemp).png
   cp "$DEST_DIR/splash.png" "$TMP_SPLASH_IMG"
 
-  PID=$(java "-splash:$TMP_SPLASH_IMG" "$TMP_SPLASH_JAVA" &)
+  java "-splash:$TMP_SPLASH_IMG" "$TMP_SPLASH_JAVA" &
+  PID=$!
 
   TMP_SCRIPT=$(mktemp)
   cp "$0" "$TMP_SCRIPT"
