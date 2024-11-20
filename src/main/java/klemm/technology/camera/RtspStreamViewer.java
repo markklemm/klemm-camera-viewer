@@ -111,6 +111,17 @@ public class RtspStreamViewer {
 				public void run() {
 					canvas.setVisible(true);
 					adjustFrameSize(canvas);					
+
+					// Close the splash screen when done
+					try {
+						if (splash != null && splash.isVisible()) {
+							splash.close();
+							splash = null;
+						}	
+					}
+					catch (Throwable t) {
+						t.printStackTrace();
+					}						
 				}
 			});
 
@@ -157,18 +168,7 @@ public class RtspStreamViewer {
 
 					// Write the converted bytes to the audio line
 					audioLine.write(audioBytes, 0, audioBytes.length);
-				}
-
-				// Close the splash screen when done
-				try {
-					if (splash != null && splash.isVisible()) {
-						splash.close();
-						splash = null;
-					}	
-				}
-				catch (Throwable t) {
-					t.printStackTrace();
-				}					
+				}				
 			}
 
 			System.out.println("Finished");
