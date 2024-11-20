@@ -23,7 +23,7 @@ JDK_VERSION="23"
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 if [[ "$SCRIPT_DIR" == "$(realpath "$DEST_DIR")" ]]; then
-  echo "Error: Script is located inside $DEST_DIR. Moving it to a temporary location and re-running."
+  echo "Script is located inside $DEST_DIR. Moving it to a temporary location and re-running."
 
   TMP_SCRIPT=$(mktemp)
   cp "$0" "$TMP_SCRIPT"
@@ -111,6 +111,7 @@ fi
 echo "Cloning repository..."
 git clone -b "$BRANCH_NAME" "$REPO_URL" "$DEST_DIR"
 cd "$DEST_DIR" || exit 1
+
 
 cd $DEST_DIR
 chmod +x checkout_build_run.sh
