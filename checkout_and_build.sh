@@ -112,6 +112,7 @@ echo "Cloning repository..."
 git clone -b "$BRANCH_NAME" "$REPO_URL" "$DEST_DIR"
 cd "$DEST_DIR" || exit 1
 
+cd $DEST_DIR
 chmod +x checkout_build_run.sh
 
 # Run Maven build commands
