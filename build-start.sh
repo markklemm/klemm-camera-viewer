@@ -2,8 +2,6 @@
 
 DEST_DIR="$HOME/klemm-camera-viewer"
 
-M2_REPO="$HOME/.m2/repository"  # Default Maven repository location
-JAVA_CMD="$JDK_DIR/bin/java"  # Path to Java executable (use "java" for OpenJDK from apt)
 
 # Set the Maven and JDK versions
 MAVEN_VERSION="3.9.5"
@@ -14,6 +12,9 @@ LOCAL_DIR="$HOME/local"
 MAVEN_DIR="$LOCAL_DIR/maven-$MAVEN_VERSION"
 MAVEN_HOME=$MAVEN_DIR
 JDK_DIR="$LOCAL_DIR/jdk-$JDK_VERSION"
+
+M2_REPO="$HOME/.m2/repository"  # Default Maven repository location
+JAVA_CMD="$JDK_DIR/bin/java"  # Path to Java executable (use "java" for OpenJDK from apt)
 
 # Create the local directory if it doesn't exist
 rm -rf   "$LOCAL_DIR"
