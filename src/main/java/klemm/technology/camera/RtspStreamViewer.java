@@ -52,7 +52,7 @@ public class RtspStreamViewer {
 
 	private void run() {
 		// Show the splash screen (this happens automatically if specified in MANIFEST.MF)
-		SplashScreen splash = SplashScreen.getSplashScreen();
+		final SplashScreen splash = SplashScreen.getSplashScreen();
 
 		try {
 			if (splash != null) {
@@ -116,7 +116,6 @@ public class RtspStreamViewer {
 					try {
 						if (splash != null && splash.isVisible()) {
 							splash.close();
-							splash = null;
 						}	
 					}
 					catch (Throwable t) {

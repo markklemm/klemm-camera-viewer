@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -f splash.pid
+javaw -splash:splash.png  "./src/main/java/klemm/technology/camera/JustSplash.java"
 
 # place a copy of this script in the DEST_DIR folder
 # RUN chmod +x checkout-build-start.sh
