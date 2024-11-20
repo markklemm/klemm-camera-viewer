@@ -1,7 +1,8 @@
 #!/bin/bash
 
-rm -f splash.pid
-java -splash:splash.png  "./src/main/java/klemm/technology/camera/JustSplash.java"
+DEST_DIR="$HOME/klemm-camera-viewer"
+rm -f "$DEST_DIR/splash.pid"
+java -splash:splash.png  "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java"
 
 # place a copy of this script in the DEST_DIR folder
 # RUN chmod +x checkout-build-start.sh
@@ -10,7 +11,7 @@ java -splash:splash.png  "./src/main/java/klemm/technology/camera/JustSplash.jav
 # mkdir -p ~/.config/autostart
 # cp camera.desktop ~/.config/autostart/
 
-DEST_DIR="$HOME/klemm-camera-viewer"
+
 
 # Variables
 REPO_URL="https://github.com/markklemm/klemm-camera-viewer.git"
