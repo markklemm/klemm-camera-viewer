@@ -72,17 +72,3 @@ $JAVA_CMD                 \
   -classpath "$CLASSPATH" \
   -XX:+ShowCodeDetailsInExceptionMessages \
   klemm.technology.camera.RtspStreamViewer &
-
-# Read the PID from the splash.pid file
-if [ -f "splash.pid" ]; then
-    PID=$(cat splash.pid)
-    echo "Found PID: $PID"
-
-    # Kill the process using the PID
-    kill -9 $PID
-    echo "Process killed."
-else
-    echo "PID file not found!"
-fi
-
-rm -f splash.pid

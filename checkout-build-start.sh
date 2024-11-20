@@ -1,8 +1,7 @@
 #!/bin/bash
 
 DEST_DIR="$HOME/klemm-camera-viewer"
-rm -f "$DEST_DIR/splash.pid"
-java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" &
+PID=$(java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" &)
 
 # place a copy of this script in the DEST_DIR folder
 # RUN chmod +x checkout-build-start.sh
@@ -10,8 +9,6 @@ java "-splash:$DEST_DIR/splash.png" "$DEST_DIR/src/main/java/klemm/technology/ca
 # RUN see "Setup Kiosk Mode" - create auto login and auto start
 # mkdir -p ~/.config/autostart
 # cp camera.desktop ~/.config/autostart/
-
-
 
 # Variables
 REPO_URL="https://github.com/markklemm/klemm-camera-viewer.git"
@@ -22,12 +19,29 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 if [[ "$SCRIPT_DIR" == "$(realpath "$DEST_DIR")" ]]; then
   echo "Script is located inside $DEST_DIR. Moving it to a temporary location and re-running."
 
+  TMP_SPLASH_JAVA=$(mktemp).java
+  cp "$DEST_DIR/src/main/java/klemm/technology/camera/JustSplash.java" "$TMP_SPLASH_JAVA"
+
+  TMP_SPLASH_IMG=$(mktemp).png
+  cp "$DEST_DIR/splash.png" "$TMP_SPLASH_IMG"
+
+  PID=$(java "-splash:$TMP_SPLASH_IMG" "$TMP_SPLASH_JAVA" &)
+
   TMP_SCRIPT=$(mktemp)
   cp "$0" "$TMP_SCRIPT"
 
   chmod +x $TMP_SCRIPT
   bash "$TMP_SCRIPT" "$@"  # Pass along any arguments the script was run with
   rm "$TMP_SCRIPT"
+
+  if [ -n "$PID" ]; then
+      echo "Found PID: $PID"
+      # Kill the process using the captured PID
+      kill -9 $PID
+      echo "Process killed."
+  else
+      echo "Failed to get PID from Java process."
+  fi
 
   exit 0  # Exit successfully since the script continues from the temporary copy
 fi
@@ -53,3 +67,12 @@ cp ~/camera.desktop ~/.local/share/applications/
 
 chmod +x build-start.sh          || exit 1
 ./build-start.sh                 || exit 1
+
+if [ -n "$PID" ]; then
+    echo "Found PID: $PID"
+    # Kill the process using the captured PID
+    kill -9 $PID
+    echo "Process killed."
+else
+    echo "Failed to get PID from Java process."
+fi

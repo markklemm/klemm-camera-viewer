@@ -1,9 +1,10 @@
 package klemm.technology.camera;
 
-import java.util.concurrent.TimeUnit;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import java.util.concurrent.TimeUnit;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
@@ -33,24 +34,26 @@ public class JustSplash {
 
 		}
 		catch (Throwable t) {
-			t.printStackTrace();
+			t.printStackTrace(System.err);
 		}
 
         try {
             // Get the current process ID
             String name = ManagementFactory.getRuntimeMXBean().getName();
             String pid = name.split("@")[0]; // PID is the part before '@'
-            
-            // Define the file path where PID will be written
-            String pidFilePath = "splash.pid";
+            System.out.println(pid);
 
-            // Write PID to a file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(pidFilePath))) {
-                writer.write(pid);
-                System.out.println("PID written to " + pidFilePath);
+            if (args != null && args.length > 0 && args[0] != null) {
+                final String pidFilePath = args[0];
+                // Write PID to a file
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(pidFilePath))) {
+                    writer.write(pid);
+                    System.out.println("PID written to " + pidFilePath);
+                }            
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
         }
 
 
@@ -58,7 +61,7 @@ public class JustSplash {
         try {
             TimeUnit.SECONDS.sleep(90); // Simulate loading for 3 seconds
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
 
     }
