@@ -8,6 +8,8 @@
 # mkdir -p ~/.config/autostart
 # cp camera.desktop ~/.config/autostart/
 
+xdp-open $HOME/klemm-camera-viewer/splash.html &
+
 DEST_DIR="$HOME/klemm-camera-viewer"
 
 
@@ -40,6 +42,14 @@ fi
 echo "Cloning repository..."
 git clone -b "$BRANCH_NAME" "$REPO_URL" "$DEST_DIR"
 cd "$DEST_DIR"                   || exit 1
+
+# setup for next run
 chmod +x checkout-build-start.sh || exit 1
+
+#install an updated link
+chmod +x ~/camera.desktop
+rm -f ~/.local/share/applications/camera.desktop
+cp ~/camera.desktop ~/.local/share/applications/
+
 chmod +x build-start.sh          || exit 1
 ./build-start.sh                 || exit 1

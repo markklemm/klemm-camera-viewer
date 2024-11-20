@@ -63,10 +63,13 @@ xset -dpms
 echo "Starting application with ${JAVA_CMD}"
 CLASSPATH="$DEST_DIR/target/classes:$DEST_DIR/target/lib/*"
 
-$JAVA_CMD \
-  -Dfile.encoding=UTF-8 \
+$JAVA_CMD                 \
+  -splash:splash.png      \
+  -Dfile.encoding=UTF-8   \
   -Dstdout.encoding=UTF-8 \
   -Dstderr.encoding=UTF-8 \
   -classpath "$CLASSPATH" \
   -XX:+ShowCodeDetailsInExceptionMessages \
-  klemm.technology.camera.RtspStreamViewer
+  klemm.technology.camera.RtspStreamViewer &
+
+pkill -f "splash.html"

@@ -1,7 +1,8 @@
 [Desktop Entry]
 Type=Application
-Exec=$HOME/klemm-camera-viewer/checkout_and_build.sh
+Exec=/home/netbook/klemm-camera-viewer/checkout-build-start.sh
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
-Name=MyApp
+Name=KlemmCamera
+Icon=/home/netbook/klemm-camera-viewer/src/main/resources/security-camera.png

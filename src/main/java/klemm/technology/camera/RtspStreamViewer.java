@@ -24,14 +24,9 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 public class RtspStreamViewer {
-
-	protected volatile boolean keepScanningCameras = true;
-
-//	protected int start  = 2;
-//	protected int size   = 15;
-//	protected int number = 10;
 	
 	public static void main(String[] args) {
+
 		try {
 
 			boolean enableSound = false;
@@ -45,6 +40,8 @@ public class RtspStreamViewer {
 			m.printStackTrace();
 		}
 
+
+
 	}
 
 	private boolean enableSound = false;
@@ -54,6 +51,26 @@ public class RtspStreamViewer {
 	}
 
 	private void run() {
+		// Show the splash screen (this happens automatically if specified in MANIFEST.MF)
+		SplashScreen splash = SplashScreen.getSplashScreen();
+
+		try {
+			if (splash != null) {
+				Graphics2D g = splash.createGraphics();
+				if (g != null) {
+					// Display loading messages on the splash screen
+					g.setColor(Color.BLACK);
+					g.setFont(new Font("Arial", Font.BOLD, 14));
+					g.drawString("Connecting to camera, please wait...", 20, 50);
+					splash.update();
+				}
+			}
+
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+
 		System.out.println("Starting");
 
 		String rtspUrl = "rtsp://camera1:camera12@10.1.1.7:554/stream1";
@@ -70,11 +87,8 @@ public class RtspStreamViewer {
 			System.out.println("Started feed");
 
 			// Video display setup
-			CanvasFrame canvas = new CanvasFrame("Klemm Camera - Iris Court",
-					CanvasFrame.getDefaultGamma() / grabber.getGamma());
-
-			canvas.setCanvasSize(960, 540); // 1920x1080 / 2
-
+			final CanvasFrame canvas = new CanvasFrame("Klemm Camera - Iris Court", CanvasFrame.getDefaultGamma() / grabber.getGamma());
+		
 			try {
 				// Load the icon image from the resources folder
 				InputStream iconStream = RtspStreamViewer.class.getClassLoader().getResourceAsStream("security-camera.png");
@@ -89,10 +103,16 @@ public class RtspStreamViewer {
 				e.printStackTrace();
 			}
 
-			canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			canvas.setVisible(true);
-
-			this.adjustFrameSize(canvas);
+			canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+			canvas.setCanvasSize(960, 540); // 1920x1080 / 2
+			
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					canvas.setVisible(true);
+					adjustFrameSize(canvas);					
+				}
+			});
 
 			System.out.println("Canvas init complete");
 
@@ -138,6 +158,17 @@ public class RtspStreamViewer {
 					// Write the converted bytes to the audio line
 					audioLine.write(audioBytes, 0, audioBytes.length);
 				}
+
+				// Close the splash screen when done
+				try {
+					if (splash != null && splash.isVisible()) {
+						splash.close();
+						splash = null;
+					}	
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}					
 			}
 
 			System.out.println("Finished");
@@ -150,8 +181,6 @@ public class RtspStreamViewer {
 				audioLine.close();
 			}
 			
-			this.keepScanningCameras = false;
-
 			System.out.println("Cleaned up");
 
 		} catch (Exception e) {
