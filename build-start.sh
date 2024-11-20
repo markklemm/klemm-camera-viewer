@@ -71,5 +71,3 @@ $JAVA_CMD                 \
   -classpath "$CLASSPATH" \
   -XX:+ShowCodeDetailsInExceptionMessages \
   klemm.technology.camera.RtspStreamViewer &
-
-pkill -f "splash.html"

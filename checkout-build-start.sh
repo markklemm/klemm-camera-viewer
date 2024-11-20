@@ -8,10 +8,7 @@
 # mkdir -p ~/.config/autostart
 # cp camera.desktop ~/.config/autostart/
 
-xdp-open $HOME/klemm-camera-viewer/splash.html &
-
 DEST_DIR="$HOME/klemm-camera-viewer"
-
 
 # Variables
 REPO_URL="https://github.com/markklemm/klemm-camera-viewer.git"
