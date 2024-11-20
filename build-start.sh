@@ -2,19 +2,18 @@
 
 DEST_DIR="$HOME/klemm-camera-viewer"
 
-
 # Set the Maven and JDK versions
 MAVEN_VERSION="3.9.5"
 JDK_VERSION="23.0.1"
 
 # Base download directories
 LOCAL_DIR="$HOME/local"
+
 MAVEN_DIR="$LOCAL_DIR/maven-$MAVEN_VERSION"
-MAVEN_HOME=$MAVEN_DIR
 JDK_DIR="$LOCAL_DIR/jdk-$JDK_VERSION"
 
 M2_REPO="$HOME/.m2/repository"  # Default Maven repository location
-JAVA_CMD="$JDK_DIR/bin/java"  # Path to Java executable (use "java" for OpenJDK from apt)
+
 
 # Create the local directory if it doesn't exist
 rm -rf   "$LOCAL_DIR"
@@ -50,16 +49,24 @@ tar -xvzf "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" --strip-components=1 -C
 
 # Clean up JDK tarball
 rm -f "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
-echo "OpenJDK installed successfully in $JDK_DIR."
+echo "OpenJDK installed successfully in $JDK_DIR"
+
+export JAVA_HOME="$JDK_DIR"
+echo "Reset JAVA_HOME to $JAVA_HOME"
+
+export MAVEN_HOME=$MAVEN_DIR
+echo "Reset MAVEN_HOME to $MAVEN_HOME"
 
 # Run Maven build commands
 echo "Building project using Maven..."
-$MAVEN_HOME/bin/mvn clean install
+$MAVEN_DIR/bin/mvn clean install
 
 # Disable Screen Lock and Power Saving
 xset s off
 xset -dpms
 
+
+JAVA_CMD="$JDK_DIR/bin/java"  # Path to Java executable (use "java" for OpenJDK from apt)
 # Run the Java application
 echo "Starting application with ${JAVA_CMD}"
 CLASSPATH="$DEST_DIR/target/classes:$DEST_DIR/target/lib/*"
