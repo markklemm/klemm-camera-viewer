@@ -26,7 +26,7 @@ mkdir -p "$LOCAL_DIR"
 # Download and install Maven
 echo "Downloading Maven version $MAVEN_VERSION..."
 MAVEN_URL="https://dlcdn.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
-rm "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+rm -f "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz"
 wget -q "$MAVEN_URL" -O "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz"
 
 echo "Extracting Maven to $MAVEN_DIR..."
@@ -34,13 +34,13 @@ mkdir -p "$MAVEN_DIR"
 tar -xvzf "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz" --strip-components=1 -C "$MAVEN_DIR"
 
 # Clean up Maven tarball
-rm "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+rm -f "/tmp/apache-maven-$MAVEN_VERSION-bin.tar.gz"
 echo "Maven installed successfully in $MAVEN_DIR."
 
 # Download and install OpenJDK
 echo "Downloading OpenJDK version $JDK_VERSION..."
 JDK_URL="https://download.java.net/java/GA/jdk${JDK_VERSION}/c28985cbf10d4e648e4004050f8781aa/11/GPL/openjdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
-rm "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
+rm -f "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
 wget -q "$JDK_URL" -O "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
 
 echo "Extracting OpenJDK to $JDK_DIR..."
@@ -48,7 +48,7 @@ mkdir -p "$JDK_DIR"
 tar -xvzf "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" --strip-components=1 -C "$JDK_DIR"
 
 # Clean up JDK tarball
-rm "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
+rm -f "/tmp/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz"
 echo "OpenJDK installed successfully in $JDK_DIR."
 
 # Run Maven build commands

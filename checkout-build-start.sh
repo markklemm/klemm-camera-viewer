@@ -39,6 +39,7 @@ fi
 # Clone the repository and check out the specified branch
 echo "Cloning repository..."
 git clone -b "$BRANCH_NAME" "$REPO_URL" "$DEST_DIR"
-cd "$DEST_DIR"          || exit 1
-chmod +x build-start.sh || exit 1
-./build-start.sh        || exit 1
+cd "$DEST_DIR"                   || exit 1
+chmod +x checkout-build-start.sh || exit 1
+chmod +x build-start.sh          || exit 1
+./build-start.sh                 || exit 1
