@@ -38,6 +38,7 @@ fi
 # Base download directories
 LOCAL_DIR="$HOME/local"
 MAVEN_DIR="$LOCAL_DIR/maven-$MAVEN_VERSION"
+MAVEN_HOME=$MAVEN_DIR
 JDK_DIR="$LOCAL_DIR/jdk-$JDK_VERSION"
 
 # Create the local directory if it doesn't exist
