@@ -119,9 +119,13 @@ public class RtspStreamViewer {
 			if (this.enableSound) {
 				audioLine.open(audioFormat);
 				audioLine.start();
+				System.out.println("Audio started");
+			}
+			else {
+				System.out.println("Audio not enabled");
 			}
 
-			System.out.println("Audio started");
+			
 
 			// Stream video and audio
 			Frame frame;
