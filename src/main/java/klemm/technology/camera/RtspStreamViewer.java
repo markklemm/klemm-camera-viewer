@@ -22,6 +22,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RtspStreamViewer {
 	
@@ -29,12 +31,18 @@ public class RtspStreamViewer {
 
 		try {
 
-			boolean enableSound = false;
+			boolean enableSound  = false;
+			boolean isFullScreen = false;
+
 			if (args != null && args.length > 0 && args[0] != null) {
-				enableSound = ("--sound".equals(args[0]));
+				enableSound = ("--enableSound".equals(args[0]));
 			}
 
-			new RtspStreamViewer(enableSound).run();
+			if (args != null && args.length > 0 && args[0] != null) {
+				isFullScreen = ("--isFullScreen".equals(args[0]));
+			}			
+
+			new RtspStreamViewer(enableSound, isFullScreen).run();
 		}
 		catch (Exception m) {
 			m.printStackTrace();
@@ -44,10 +52,15 @@ public class RtspStreamViewer {
 
 	}
 
-	private boolean enableSound = false;
 
-	private RtspStreamViewer(final boolean enableSound) {
-		this.enableSound = enableSound;
+	private boolean   enableSound  = false;
+    private boolean   isFullScreen = false; // Track fullscreen state
+
+    // private Rectangle originalBounds;    // Store the original size and position	
+
+	private RtspStreamViewer(final boolean enableSound, final boolean isFullScreen) {
+		this.enableSound  = enableSound;
+		this.isFullScreen = isFullScreen;
 	}
 
 	private void run() {
@@ -73,7 +86,7 @@ public class RtspStreamViewer {
 
 		System.out.println("Starting");
 
-		String rtspUrl = "rtsp://camera1:camera12@10.1.1.7:554/stream1";
+		String rtspUrl = "rtsp://camera1:camera12@10.1.1.75:554/stream1";
 
 		// avutil.av_log_set_level(avutil.AV_LOG_INFO);
 		FFmpegLogCallback.set();
@@ -105,8 +118,7 @@ public class RtspStreamViewer {
 
 			canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 			canvas.setCanvasSize(960, 540); // 1920x1080 / 2
-			
-			
+						
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					canvas.setVisible(true);
@@ -213,5 +225,41 @@ public class RtspStreamViewer {
             canvas.setLocationRelativeTo(null);
         }
     }
+
+    // private void toggleFullScreen(CanvasFrame canvas) {
+
+	// 	final boolean wasVisible = canvas.isVisible();
+		
+    //     if (isFullScreen) {
+    //         // Exit fullscreen: Restore original bounds and decorations
+    //         canvas.setVisible(false); // Hide frame before making changes
+	// 		canvas.dispose();
+    //         canvas.setUndecorated(false);
+    //         canvas.setBounds(originalBounds);
+    //         canvas.setVisible(wasVisible);  // Show frame again after changes
+    //     } else {
+    //         // Enter fullscreen: Save original bounds and make undecorated
+    //         originalBounds = canvas.getBounds();
+    //         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+    //         canvas.setVisible(false); // Hide frame before making changes
+	// 		canvas.dispose();			
+    //         canvas.setUndecorated(true);
+    //         canvas.setBounds(gd.getDefaultConfiguration().getBounds()); // Set to fullscreen bounds
+    //         canvas.setVisible(wasVisible);  // Show frame again after changes
+    //     }
+
+	// 	canvas.getRootPane().addMouseListener(new MouseAdapter() {
+	// 		@Override
+	// 		public void mouseClicked(MouseEvent e) {
+	// 			// if (e.getClickCount() == 2)  // Check for double-click
+	// 			{ 
+	// 				toggleFullScreen(canvas);
+	// 			}
+	// 		}
+	// 	});
+    // 
+    //     isFullScreen = !isFullScreen; // Toggle state
+    // }	
 
 }
