@@ -1,18 +1,13 @@
 package klemm.technology.camera;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
-
-import java.util.concurrent.TimeUnit;
 import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
+import java.util.concurrent.TimeUnit;
 
 public class JustSplash {
 

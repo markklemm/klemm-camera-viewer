@@ -1,29 +1,36 @@
 package klemm.technology.camera;
 
-import java.net.Socket;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegLogCallback;
 import org.bytedeco.javacv.Frame;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+/* 
+ * TODO this is a sample only
+ * TODO there should be a single Canvas and a number of Frames with matching Grabbers - where the grabbers run in a Future
+ * TODO the Discovery will advise when a new Frame/Grabber should be created and tiled only to the Canvas.
+ * TODO each Frame should have a panel that draws over the top as a Glass Pane with buttons and controls for that Frame
+ * TODO the Canvas should have a panel that draws over the top as a Glass Pane
+ * TODO the Canvas Glass Pane should draw from each of the Frames
+ */
 
 public class RtspStreamViewer {
 	
@@ -47,16 +54,14 @@ public class RtspStreamViewer {
 		catch (Exception m) {
 			m.printStackTrace();
 		}
-
-
-
 	}
 
+
+	private CanvasFrame canvas;
 
 	private boolean   enableSound  = false;
     private boolean   isFullScreen = false; // Track fullscreen state
 
-    // private Rectangle originalBounds;    // Store the original size and position	
 
 	private RtspStreamViewer(final boolean enableSound, final boolean isFullScreen) {
 		this.enableSound  = enableSound;
@@ -203,6 +208,11 @@ public class RtspStreamViewer {
 	}
 
 	private void adjustFrameSize(CanvasFrame canvas) {
+
+		if (canvas == null) {
+			return;
+		}
+
         // Get current frame size
         Dimension currentSize = canvas.getSize();
         int currentWidth = currentSize.width;
@@ -226,40 +236,13 @@ public class RtspStreamViewer {
         }
     }
 
-    // private void toggleFullScreen(CanvasFrame canvas) {
+	public void toggleSound() {
+	    // TODO enable sound is per frame
+	}
 
-	// 	final boolean wasVisible = canvas.isVisible();
+    public void toggleFullScreen() {
+        this.isFullScreen = !this.isFullScreen;
 		
-    //     if (isFullScreen) {
-    //         // Exit fullscreen: Restore original bounds and decorations
-    //         canvas.setVisible(false); // Hide frame before making changes
-	// 		canvas.dispose();
-    //         canvas.setUndecorated(false);
-    //         canvas.setBounds(originalBounds);
-    //         canvas.setVisible(wasVisible);  // Show frame again after changes
-    //     } else {
-    //         // Enter fullscreen: Save original bounds and make undecorated
-    //         originalBounds = canvas.getBounds();
-    //         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-
-    //         canvas.setVisible(false); // Hide frame before making changes
-	// 		canvas.dispose();			
-    //         canvas.setUndecorated(true);
-    //         canvas.setBounds(gd.getDefaultConfiguration().getBounds()); // Set to fullscreen bounds
-    //         canvas.setVisible(wasVisible);  // Show frame again after changes
-    //     }
-
-	// 	canvas.getRootPane().addMouseListener(new MouseAdapter() {
-	// 		@Override
-	// 		public void mouseClicked(MouseEvent e) {
-	// 			// if (e.getClickCount() == 2)  // Check for double-click
-	// 			{ 
-	// 				toggleFullScreen(canvas);
-	// 			}
-	// 		}
-	// 	});
-    // 
-    //     isFullScreen = !isFullScreen; // Toggle state
-    // }	
+    }	
 
 }

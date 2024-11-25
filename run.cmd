@@ -8,9 +8,10 @@ cd c:\devel\source\klemm-camera-viewer
 
 start %JAVA_HOME%bin\javaw.exe -splash:splash.png  ".\src\main\java\klemm\technology\camera\JustSplash.java" %TEMP_FILE%
 
-call mvn clean install
+call mvn -q clean install
 
-start javaw.exe                                ^
+REM start javaw.exe                              ^
+call java.exe                                ^
 -splash:splash.png                           ^
 -Dfile.encoding=UTF-8                        ^
 -Dstdout.encoding=UTF-8                      ^
