@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ShortBuffer;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
@@ -18,6 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.bytedeco.ffmpeg.avutil.AVDictionaryEntry;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegLogCallback;
@@ -35,25 +38,56 @@ import org.bytedeco.javacv.Frame;
 public class RtspStreamViewer {
 	
 	public static void main(String[] args) {
+	    
+        boolean enableSound  = false;
+        boolean isFullScreen = false;
+	    
+	    if (args.length > 0) {
+	        switch (args[0].toLowerCase()) {
+	            case "/s":  // run full screen
+	                isFullScreen = true;
+	                
+	                break;
+	            case "/c":  // open settings dialog
+	                
+	                // TODO show settings only
+	                return;
+//	                break;
 
-		try {
-
-			boolean enableSound  = false;
-			boolean isFullScreen = false;
-
-			if (args != null && args.length > 0 && args[0] != null) {
-				enableSound = ("--enableSound".equals(args[0]));
-			}
-
-			if (args != null && args.length > 0 && args[0] != null) {
-				isFullScreen = ("--isFullScreen".equals(args[0]));
-			}			
-
-			new RtspStreamViewer(enableSound, isFullScreen).run();
-		}
-		catch (Exception m) {
-			m.printStackTrace();
-		}
+	            case "/p":  // preview mode
+	                
+	                // TODO use the windows handle for the display
+                    return;
+	                
+//	                if (args.length > 1) {
+//	                    long hwnd = Long.parseLong(args[1]);
+//	                    showPreview(hwnd);
+//	                }
+//	                break;
+                    
+	            case "--enableSound":
+	                
+	                enableSound = true;
+	                
+	                break;
+	                
+	           case "--isFullScreen":
+                    
+                    isFullScreen = true;
+                    
+                    break;	                
+                    
+	            default:
+	                System.out.println("Unknown argument: " + args[0]);
+	        }
+	    }
+	    
+	    try {
+            new RtspStreamViewer(enableSound, isFullScreen, null, 1).run();
+        }
+        catch (Exception m) {
+            m.printStackTrace(System.err);
+        }
 	}
 
 
@@ -62,13 +96,31 @@ public class RtspStreamViewer {
 	private boolean   enableSound  = false;
     private boolean   isFullScreen = false; // Track fullscreen state
 
+    
+    private final String rtspUrl;
+    private final int cameraNumber;
 
-	private RtspStreamViewer(final boolean enableSound, final boolean isFullScreen) {
+	public RtspStreamViewer(final boolean enableSound, final boolean isFullScreen, final String address, final int cameraNumber) {
 		this.enableSound  = enableSound;
 		this.isFullScreen = isFullScreen;
+		
+		if (address == null || address.trim().length() == 0) {
+		    this.rtspUrl = "rtsp://camera1:camera12@192.168.1.106:554/stream2";
+		    
+		    System.out.println("Connecting to default IP:" + this.rtspUrl);
+		}
+		else {
+		    this.rtspUrl = "rtsp://camera1:camera12@" + address + ":554/stream2";
+		    
+		    System.out.println("Connecting to provided IP:" + this.rtspUrl);
+		}
+		
+		this.cameraNumber = cameraNumber;
+		
+		
 	}
 
-	private void run() {
+	public void run() {
 		// Show the splash screen (this happens automatically if specified in MANIFEST.MF)
 		final SplashScreen splash = SplashScreen.getSplashScreen();
 
@@ -91,7 +143,7 @@ public class RtspStreamViewer {
 
 		System.out.println("Starting");
 
-		String rtspUrl = "rtsp://camera1:camera12@10.1.1.75:554/stream1";
+		
 
 		// avutil.av_log_set_level(avutil.AV_LOG_INFO);
 		FFmpegLogCallback.set();
@@ -99,13 +151,23 @@ public class RtspStreamViewer {
 		System.out.println("Init complete");
 
 		try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(rtspUrl)) {
-			grabber.setOption("rtsp_transport", "tcp");
-			grabber.start();
-
+		
+			grabber.setFormat("rtsp");
+		    grabber.setOption("rtsp_transport", "tcp");   // try TCP first
+		    
+		    for (Entry<String, String> e : grabber.getOptions().entrySet())
+		    {
+		        System.out.println("Key: " + e.getKey() + ", value: " + e.getValue());
+		    }
+		    
+            System.out.println("Options set, starting feed");
+		    
+		    grabber.start(false);
+			
 			System.out.println("Started feed");
 
 			// Video display setup
-			final CanvasFrame canvas = new CanvasFrame("Klemm Camera - Iris Court", CanvasFrame.getDefaultGamma() / grabber.getGamma());
+			final CanvasFrame canvas = new CanvasFrame("Klemm Camera: " + this.cameraNumber, CanvasFrame.getDefaultGamma() / grabber.getGamma());
 		
 			try {
 				// Load the icon image from the resources folder
@@ -127,7 +189,7 @@ public class RtspStreamViewer {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					canvas.setVisible(true);
-					adjustFrameSize(canvas);					
+					adjustFrameSize(canvas, isFullScreen);					
 
 					// Close the splash screen when done
 					try {
@@ -207,7 +269,7 @@ public class RtspStreamViewer {
 		System.out.println("Done");
 	}
 
-	private void adjustFrameSize(CanvasFrame canvas) {
+	private void adjustFrameSize(CanvasFrame canvas, boolean isFullScreen) {
 
 		if (canvas == null) {
 			return;
@@ -217,14 +279,21 @@ public class RtspStreamViewer {
         Dimension currentSize = canvas.getSize();
         int currentWidth = currentSize.width;
         int currentHeight = currentSize.height;
+        
+        System.out.println("Current Size:" + currentWidth + "x" + currentHeight);
 
         // Tolerance
-        int tolerance = 100;
+        int tolerance = (isFullScreen ? 1000 : 100);
+        
+        System.out.println("Fullscreen:" + isFullScreen);
+        System.out.println("Tolerance:" + tolerance);
 
         // Get screen dimensions
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
+        
+        System.out.println("ScreenSize Size:" + screenWidth + "x" + screenHeight);
 
         // Check if the screen resolution is within the tolerance of the current frame size
         if (Math.abs(screenWidth - currentWidth) <= tolerance || Math.abs(screenHeight - currentHeight) <= tolerance) {
@@ -233,6 +302,19 @@ public class RtspStreamViewer {
         } else {
             // Center the frame
             canvas.setLocationRelativeTo(null);
+            
+            if (this.cameraNumber > 1) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        final Point location = canvas.getLocation();
+                        
+                        canvas.setLocation((location.x + (50 * cameraNumber)), (location.y + (50 * cameraNumber)));
+                    }
+                });                
+            }
+            
         }
     }
 

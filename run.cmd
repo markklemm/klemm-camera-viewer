@@ -6,18 +6,19 @@ set "TEMP_FILE=%TEMP_FILE: =_%"
 
 cd c:\devel\source\klemm-camera-viewer
 
-start %JAVA_HOME%bin\javaw.exe -splash:splash.png  ".\src\main\java\klemm\technology\camera\JustSplash.java" %TEMP_FILE%
+start %JAVA_HOME%bin\javaw.exe --enable-native-access=ALL-UNNAMED -splash:splash.png  ".\src\main\java\klemm\technology\camera\JustSplash.java" %TEMP_FILE%
 
-call mvn -q clean install
+call mvn -q install
 
-REM start javaw.exe                              ^
-call java.exe                                ^
+REM call java.exe                                ^
+start javaw.exe                              ^
+--enable-native-access=ALL-UNNAMED           ^
 -splash:splash.png                           ^
 -Dfile.encoding=UTF-8                        ^
 -Dstdout.encoding=UTF-8                      ^
 -Dstderr.encoding=UTF-8                      ^
--classpath "C:\devel\source\klemm-camera-viewer\target\classes;C:\devel\source\klemm-camera-viewer\target\lib\*" ^
--XX:+ShowCodeDetailsInExceptionMessages klemm.technology.camera.RtspStreamViewer
+-classpath ".\target\classes;.\target\lib\*" ^
+-XX:+ShowCodeDetailsInExceptionMessages klemm.technology.camera.SubnetScanner
 
 echo "Reading PID from %TEMP_FILE%"
 type "%TEMP_FILE%"

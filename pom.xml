@@ -9,9 +9,9 @@
 	<description>Camera Viewer app</description>
 
 	<properties>
-		<java.version>23</java.version>
-		<maven.compiler.source>23</maven.compiler.source>
-		<maven.compiler.target>23</maven.compiler.target>
+		<java.version>25</java.version>
+		<maven.compiler.source>25</maven.compiler.source>
+		<maven.compiler.target>25</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -19,61 +19,86 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacpp</artifactId>
-			<version>1.5.11</version> <!-- Use the required version -->
+			<version>1.5.12</version> <!-- Use the required version -->
 		</dependency>
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg-platform</artifactId>
-			<version>7.1-1.5.11</version>
+			<version>7.1.1-1.5.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv</artifactId>
-			<version>1.5.11</version>
-		</dependency>
-
-
+			<version>1.5.12</version>
+		</dependency>		
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>2.9.4</version>
+        </dependency>		     
 	</dependencies>
 
-<build>
+    <build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<AppName>${project.name}</AppName>
-							<AppVersion>${project.version}</AppVersion>
-							<AppDate>${timestamp}</AppDate>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.8.0</version>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
-					</execution>
-				</executions>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.9</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <AppName>${project.name}</AppName>
+                            <AppVersion>${project.version}</AppVersion>
+                            <AppDate>${timestamp}</AppDate>
+                        </manifestEntries>
+                    </archive>
+                    
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                        
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -111,13 +136,60 @@
                 </executions>
             </plugin>
             <plugin>
-	           <artifactId>maven-surefire-plugin</artifactId>
-	           <version>3.5.0</version>
-	        </plugin>
-	        <plugin>
-	           <artifactId>maven-failsafe-plugin</artifactId>
-	           <version>3.5.0</version>
-	        </plugin>		
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.3</version>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <id>package-with-jpackage</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>klemm.technology.camera.RtspStreamViewer</mainClass>
+                            <mainJar>camera-viewer-0.0.1.jar</mainJar>
+                            <input>${project.build.directory}/lib</input>
+                            <name>KlemmCamera</name>
+                            <vendor>Klemm Technology</vendor>
+                            <appVersion>${project.version}</appVersion>
+                            <destination>${project.build.directory}/jpackage</destination>
+                            <type>APP_IMAGE</type>
+                            <javaOptions>
+                                <javaOption>-splash:${project.basedir}/src/main/resources/splash.png</javaOption>
+                            </javaOptions>
+                            <winConsole>true</winConsole>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+
+
+
 		</plugins>
 	</build>	
+	
+    <pluginRepositories>
+        <pluginRepository>
+            <id>graalvm-native-build-tools-snapshots</id>
+            <name>GraalVM native-build-tools Snapshots</name>
+            <url>https://raw.githubusercontent.com/graalvm/native-build-tools/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>	
 </project>
