@@ -11,14 +11,16 @@ start %JAVA_HOME%bin\javaw.exe --enable-native-access=ALL-UNNAMED -splash:splash
 call mvn -q install
 
 REM call java.exe                                ^
-start javaw.exe                              ^
---enable-native-access=ALL-UNNAMED           ^
--splash:splash.png                           ^
--Dfile.encoding=UTF-8                        ^
--Dstdout.encoding=UTF-8                      ^
--Dstderr.encoding=UTF-8                      ^
--classpath ".\target\classes;.\target\lib\*" ^
--XX:+ShowCodeDetailsInExceptionMessages klemm.technology.camera.SubnetScanner
+REM start javaw.exe                              ^
+REM --enable-native-access=ALL-UNNAMED           ^
+REM -splash:splash.png                           ^
+REM -Dfile.encoding=UTF-8                        ^
+REM -Dstdout.encoding=UTF-8                      ^
+REM -Dstderr.encoding=UTF-8                      ^
+REM -classpath ".\target\classes;.\target\lib\*" ^
+REM -XX:+ShowCodeDetailsInExceptionMessages klemm.technology.camera.SubnetScanner /s "<MyPASSWORD>"
+
+powershell.exe -ExecutionPolicy Bypass -File ".\run-tapo.ps1"
 
 echo "Reading PID from %TEMP_FILE%"
 type "%TEMP_FILE%"

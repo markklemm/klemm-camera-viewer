@@ -83,7 +83,7 @@ public class RtspStreamViewer {
 	    }
 	    
 	    try {
-            new RtspStreamViewer(enableSound, isFullScreen, null, 1).run();
+            new RtspStreamViewer(enableSound, isFullScreen, null, 1, true).run();
         }
         catch (Exception m) {
             m.printStackTrace(System.err);
@@ -93,24 +93,33 @@ public class RtspStreamViewer {
 
 	private CanvasFrame canvas;
 
-	private boolean   enableSound  = false;
-    private boolean   isFullScreen = false; // Track fullscreen state
+	private boolean   enableSound    = false;
+    private boolean   isFullScreen   = false; // Track fullscreen state
+    private boolean   isFiveFiveFour = true;
 
     
     private final String rtspUrl;
     private final int cameraNumber;
 
-	public RtspStreamViewer(final boolean enableSound, final boolean isFullScreen, final String address, final int cameraNumber) {
-		this.enableSound  = enableSound;
-		this.isFullScreen = isFullScreen;
+	public RtspStreamViewer(final boolean enableSound, final boolean isFullScreen, final String address, final int cameraNumber, final boolean isFiveFiveFour) {
+		this.enableSound    = enableSound;
+		this.isFullScreen   = isFullScreen;
+		this.isFiveFiveFour = isFiveFiveFour;
+		
+		String protocol   = "rtsp://camera1:camera12@";
+		String portStream = "554/stream2";
+		if (!this.isFiveFiveFour) {
+		    protocol   = "tapo://";
+		    portStream = "8800";
+		}
 		
 		if (address == null || address.trim().length() == 0) {
-		    this.rtspUrl = "rtsp://camera1:camera12@192.168.1.106:554/stream2";
+		    this.rtspUrl = "" + protocol +"192.168.1.106:" + portStream;
 		    
 		    System.out.println("Connecting to default IP:" + this.rtspUrl);
 		}
 		else {
-		    this.rtspUrl = "rtsp://camera1:camera12@" + address + ":554/stream2";
+		    this.rtspUrl = "" + protocol + address + ":" + portStream;
 		    
 		    System.out.println("Connecting to provided IP:" + this.rtspUrl);
 		}
