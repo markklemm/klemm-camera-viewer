@@ -83,7 +83,7 @@ public class RtspStreamViewer {
 	    }
 	    
 	    try {
-            new RtspStreamViewer(enableSound, isFullScreen, null, 1, true).run();
+            new RtspStreamViewer(enableSound, isFullScreen, null, 1).run();
         }
         catch (Exception m) {
             m.printStackTrace(System.err);
@@ -101,7 +101,7 @@ public class RtspStreamViewer {
     private final String rtspUrl;
     private final int cameraNumber;
 
-	public RtspStreamViewer(final boolean enableSound, final boolean isFullScreen, final String address, final int cameraNumber, final boolean isFiveFiveFour) {
+	public RtspStreamViewer(final boolean enableSound, final boolean isFullScreen, final String address, final int cameraNumber) {
 		this.enableSound    = enableSound;
 		this.isFullScreen   = isFullScreen;
 		this.isFiveFiveFour = isFiveFiveFour;
