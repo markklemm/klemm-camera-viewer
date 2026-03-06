@@ -841,11 +841,11 @@ public final class TapoStreamViewer implements Closeable {
 
     // ===== Usage example =====
     public static void main(String[] args) throws Exception {
-        start(args[1], args[0]);
+        start(args[1], args[0], 1);
     }
     
     
-    public static void start(final String cloudPassword, final String ipAddress) throws IOException, Exception {
+    public static void start(final String cloudPassword, final String ipAddress, final int cameraNumber) throws IOException, Exception {
 
         try (TapoStreamViewer c = TapoStreamViewer.dial("tapo://" + cloudPassword + "@" + ipAddress)) {
 
@@ -897,7 +897,7 @@ public final class TapoStreamViewer implements Closeable {
                             ", height: " + grabber.getImageHeight());
 
                     // Video display setup
-                    final CanvasFrame canvas = new CanvasFrame("Klemm Camera: " + 3, CanvasFrame.getDefaultGamma() / grabber.getGamma());
+                    final CanvasFrame canvas = new CanvasFrame("Klemm Camera: " + cameraNumber, CanvasFrame.getDefaultGamma() / grabber.getGamma());
 
                     try {
                         // Load the icon image from the resources folder

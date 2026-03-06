@@ -17,13 +17,9 @@ import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import klemm.technology.ui.LookAndFeel;
-
 public class SubnetScanner {
 
     public static void main(String[] args) {
-
-        LookAndFeel.applyWeb();
 
         final String cloudPassword = ((args.length > 1) ? args[1].trim() : "default");
 
@@ -142,7 +138,10 @@ public class SubnetScanner {
                     final String ipStr = ip.getHostAddress();
 
                     // Check if port 554 is open
-                    boolean portOpen = isPortOpen(ip, 554, 980); // 980ms timeout                    
+                    isPortOpen(ip, 8800, 1200); // 950ms timeout - check if it is awake
+                    
+                    
+                    boolean portOpen = isPortOpen(ip, 554, 980); // 980ms timeout - prefer rtsp stream on preset camera account                    
                     if (portOpen) {
                         System.out.println("Found port on IP:\t" + ipStr);
                         System.out.print("IP: ");
@@ -151,7 +150,7 @@ public class SubnetScanner {
                         System.out.println();
 
                         try {
-                            new RtspStreamViewer(false, false, ipStr, getNextCameraNumber(), true).run();
+                            new RtspStreamViewer(false, false, ipStr, getNextCameraNumber()).run();
                         } catch (Exception m) {
                             m.printStackTrace(System.err);
                             System.out.println("Error connecting player on IP:\t" + ipStr);
@@ -159,12 +158,12 @@ public class SubnetScanner {
                     }
                     else {
                         // ping and wait, then ping again, then third time lucky - it might work with a pause but this works.
-                        portOpen = isPortOpen(ip, 8800, 980); // 950ms timeout
+                        portOpen = isPortOpen(ip, 8800, 1200); // 950ms timeout - is it there
                         if (!portOpen) {
-                            portOpen = isPortOpen(ip, 8800, 1000); // 950ms timeout
+                            portOpen = isPortOpen(ip, 8800, 1200); // 950ms timeout - this is probably just a delay
                         }
                         if (!portOpen) {
-                            portOpen = isPortOpen(ip, 8800, 980); // 950ms timeout
+                            portOpen = isPortOpen(ip, 8800, 980); // 950ms timeout - is it there now?
                         }
                         if (portOpen) {
                             System.out.print("IP: ");
@@ -173,7 +172,7 @@ public class SubnetScanner {
                             System.out.println();
     
                             try {
-                                TapoStreamViewer.start(cloudPassword, ipStr);
+                                TapoStreamViewer.start(cloudPassword, ipStr, getNextCameraNumber());
                             } catch (Exception m) {
                                 m.printStackTrace(System.err);
                                 System.out.println("Error connecting player on IP:\t" + ipStr);
